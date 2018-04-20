@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+ 
+<mapper namespace="com.example.mvcBoard.dao.CommentDao">
+ 
+    <select id="commentCount" resultType="int">
+        SELECT COUNT(*) FROM COMMENT
+    </select>
+    
+    <select id="commentList" resultType="com.example.mvcBoard.dto.CommentDto">
+        SELECT * FROM COMMENT WHERE bNo = #{bNo}
+    </select>
+    
+    <insert id="commentInsert" parameterType="com.example.mvcBoard.dto.CommentDto">
+        INSERT INTO COMMENT (cNo, bNo, CONTENT, WRITER, REG_DATE) VALUES(#{cNo},#{bNo},#{content},#{writer},now()) 
+    </insert>
+    
+    <update id="commentUpdate" parameterType="com.example.mvcBoard.dto.CommentDto">
+        UPDATE COMMENT SET CONTENT = #{content} WHERE cNo = #{cNo}
+    </update>
+    
+    <delete id="commentDelete" parameterType="int">
+        DELETE FROM COMMENT WHERE cNo = #{cNo}
+    </delete>
+</mapper>
