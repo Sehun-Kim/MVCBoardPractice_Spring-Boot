@@ -3,6 +3,7 @@ package com.example.mvcBoard.dao;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.example.mvcBoard.dto.BoardDto;
@@ -15,6 +16,9 @@ public interface BoardDao {
 	
 	//게시글 개수  
 	public int boardCount() throws Exception;
+	
+	//게시글을 분할해서 가져오기
+	public List<BoardDto> boardDivision(@Param("startNum") int startNum, @Param("limit") int limit) throws Exception;
 
 	//게시글 목록  
 	public List<BoardDto> boardList() throws Exception;

@@ -9,6 +9,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		SELECT COUNT(*) FROM BOARD
 	</select>
 	
+	<select id="boardDivision" resultType="com.example.mvcBoard.dto.BoardDto">
+        SELECT * FROM BOARD LIMIT #{startNum}, #{limit}
+    </select>
+	
 	 <select id="boardList" resultType="com.example.mvcBoard.dto.BoardDto">
         SELECT * FROM BOARD
     </select>

@@ -5,8 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -77,7 +77,6 @@ public class BoardController {
     	BoardDto board = new BoardDto();
     	FileDto  file  = new FileDto();
 
-
     	board.setSubject(request.getParameter("subject"));
     	board.setContent(request.getParameter("content"));
     	board.setWriter(request.getParameter("writer"));
@@ -90,7 +89,6 @@ public class BoardController {
             File destinationFile; // 실제로 저장될 파일 객체
             String destinationFileName; // 실제로 저장될 파일 이름
            
-            
             do { 
                 destinationFileName = RandomStringUtils.randomAlphanumeric(32) + "." + fileNameExtension; 
                 destinationFile = new File(uploadFileDir, destinationFileName); 
@@ -131,7 +129,6 @@ public class BoardController {
         mBoardService.boardUpdateService(board);
         
         return "redirect:/board/"+ request.getParameter("bNo"); 
-
     }
  
     @RequestMapping("/delete/{bNo}")
@@ -145,11 +142,28 @@ public class BoardController {
     // 모든 게시물을 csv파일로 다운로드 받기 위한 메소드
     @RequestMapping("/csvdownload")
     private ResponseEntity<String>  csvDownload() throws Exception {
-    	Calendar cal = Calendar.getInstance();
+    	
+    	// csv file 이름
+    	Calendar cal = Calendar.getInstance(); 
     	String fileName = cal.getTime().toString();
     	
-    	List<BoardDto> dtoList = mBoardService.boardListService();
+    	int startNum = 0; // table의 데이터를 getLimit개씩 가져올 때 시작 레코드를 지정해줌
+    	int limit = 100; // 한번에 가져올 레코드의 크기
+    	List<BoardDto> dtoList = new ArrayList<BoardDto>(); // data가 들어갈 list
     	
+    	// dtoList에 mybatis를 통해 얻어온 data를 넣어줌
+    	while(true) {
+    		List<BoardDto> tmpList = mBoardService.boardDivisionService(startNum, limit); // Service 객체로 limit의 크기만큼 레코드를 가져옴
+    		if(tmpList.size() == 0) { // 더 이상 가져올 레코드가 없으면 종료
+    			break;
+    		}else { // 가져온 레코드의 크기 만큼 dtoList에 넣어줌
+    			for(int i=0; i<tmpList.size(); i++) {
+        			dtoList.add(tmpList.get(i));
+        		}
+        		startNum += tmpList.size(); // 가져올 레코드의 시작점을 지정(가져온 레코드의 다음 레코드를 지정)
+    		}
+    	}
+
     	HttpHeaders header = new HttpHeaders();
     	header.add("Content-Type", "text/csv; charset=MS949");
     	header.add("Content-Disposition", "attachment; filename=\"" + fileName +".csv" + "\"");
@@ -157,7 +171,7 @@ public class BoardController {
     	return new ResponseEntity<String>(setContent(dtoList), header, HttpStatus.CREATED);
     }
     
-    // board의 데이터를 csv파일의 행으로 만들어 주기 위한 메소드
+    // board의 데이터를 csv파일에 옮겨주는 메소드
 	private String setContent(List<BoardDto> dtoList) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("bNo,subject,content,writer,reg_date\n");
