@@ -20,7 +20,7 @@
     <div class="col-xs-12" style="margin:15px auto;">
         <label style="font-size:20px;"><span class="glyphicon glyphicon-list-alt"></span> 게시글 목록</label>
         <button class="btn btn-primary btn-sm" style="float:right;" onclick="location.href='insert'">글쓰기</button>
-        <button class="btn btn-primary btn-sm" style="float:right;" onclick="location.href='csvdownload'">csv 다운로드</button>
+        <button class="btn btn-primary btn-sm" style="float:right;" onclick="location.href='csvdownload'">모든 게시글 다운로드</button>
     </div>
     
     <div class="col-xs-12">
